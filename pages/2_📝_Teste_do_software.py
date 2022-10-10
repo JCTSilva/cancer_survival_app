@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import pickle
-from sklearn import  preprocessing
+from sklearn import preprocessing
 import plotly.express as px
 from PIL import Image
 from geopy.distance import geodesic
