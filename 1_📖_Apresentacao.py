@@ -1,5 +1,4 @@
 # Bibliotecas utilizadas
-from turtle import delay
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -10,12 +9,12 @@ from PIL import Image
 from geopy.distance import geodesic
 
 # Definicao das imagens e videos
-video_apresentacao = open('/home/FinalProject_IMT_CANCER/TeaserTcc20220921.mp4', 'rb')
+video_apresentacao = open('TeaserTcc20220921.mp4', 'rb')
 video_bytes = video_apresentacao.read()
-perfiljean = Image.open('/home/FinalProject_IMT_CANCER/JeanCarloTeodoroDaSilva.jpeg')
-perfillucas = Image.open('/home/FinalProject_IMT_CANCER/LucasSerafim.jpeg')
-perfiljones = Image.open('/home/FinalProject_IMT_CANCER/Jones.jpeg')
-perfilvanderlei = Image.open('/home/FinalProject_IMT_CANCER/Vanderlei.jpeg')
+perfiljean = Image.open('JeanCarloTeodoroDaSilva.jpeg')
+perfillucas = Image.open('LucasSerafim.jpeg')
+perfiljones = Image.open('Jones.jpeg')
+perfilvanderlei = Image.open('Vanderlei.jpeg')
 
 # Definição das tabs
 tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Vídeo teaser', 'Responsáveis', 'Resumo', 'Objetivo', 'Resultados', 'Conclusões', 'Apoio'])
