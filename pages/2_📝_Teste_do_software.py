@@ -190,23 +190,23 @@ def preprocess(input_df, data):
     return df
 
 ##--------------------------------------CARREGAR MODELOS-------------------------------------------
-with open('sobrevida_12meses.pickle' , 'rb') as f:
+with open('modelos/sobrevida_12meses.pickle' , 'rb') as f:
     model2 = pickle.load(f)
 
-with open('sobrevida_24meses.pickle' , 'rb') as f:
+with open('modelos/sobrevida_24meses.pickle' , 'rb') as f:
     model4 = pickle.load(f)
 
-with open('sobrevida_36meses.pickle' , 'rb') as f:
+with open('modelos/sobrevida_36meses.pickle' , 'rb') as f:
     model6 = pickle.load(f)
 
-with open('sobrevida_48meses.pickle' , 'rb') as f:
+with open('modelos/sobrevida_48meses.pickle' , 'rb') as f:
     model8 = pickle.load(f)
 
-with open('sobrevida_60meses.pickle' , 'rb') as f:
+with open('modelos/sobrevida_60meses.pickle' , 'rb') as f:
     model10 = pickle.load(f)
 
 ##--------------------------------------PREPARA DADOS DE IBGE PARA CALCULAR DISTANCIA-------------------------------------------
-ibge_df = pd.read_csv('ibge.csv')
+ibge_df = pd.read_csv('dados/ibge.csv')
 
 ibge_df['GEOLOC'] = list(zip(ibge_df.latitude, ibge_df.longitude))
     
@@ -218,12 +218,12 @@ IBGEATEN.columns = ['IBGEATEN', 'GEOLOCALIZACAO_ATEN']
 
 
 ##--------------------------------------PREPARA DADOS PARA PRÉ-PROCESSAMENTO-------------------------------------------
-dfb = pd.read_csv('cancer_boca.csv', index_col='Unnamed: 0')
-dfo = pd.read_csv('cancer_orofaringe.csv', index_col='Unnamed: 0')
+dfb = pd.read_csv('dados/cancer_boca.csv', index_col='Unnamed: 0')
+dfo = pd.read_csv('dados/cancer_orofaringe.csv', index_col='Unnamed: 0')
 data = pd.concat([dfb, dfo], ignore_index=True)
 
 #---------------------------------------RODAR O APP-----------------------------------------------
-image = Image.open('imt.jpeg')
+image = Image.open('fotos/imt.jpeg')
 st.image(image, use_column_width=False)
 
 add_selectbox = st.sidebar.selectbox(
@@ -239,30 +239,31 @@ st.sidebar.success('https://www.pycaret.org')
 st.title("Aplicativo para predição de sobrevida de pacientes com câncer de boca/orofaringe")
 
 if add_selectbox == 'Individual':
-    # Leitura dos dados no app
-    input_df = read_data()
-    # Adiciona os dados de geolocalização
-    input_df = input_df.merge(IBGE, how='left', on='IBGE')
-    input_df = input_df.merge(IBGEATEN, how='left', on='IBGEATEN')
-    # Cálcula a distância entre as cidades
-    distancias = []
-    for i in range(input_df.shape[0]):
-        geo       = input_df.iloc[i].GEOLOCALIZACAO
-        geo_aten  = input_df.iloc[i].GEOLOCALIZACAO_ATEN
-        dist = geodesic(geo, geo_aten).km
-        distancias.append(dist)
-    input_df['DISTANCIA_CIDADES'] = distancias
-    # Retira as colunas que não são utilizadas
-    input_df = input_df.drop(['GEOLOCALIZACAO', 'GEOLOCALIZACAO_ATEN',
-    'IBGE', 'IBGEATEN'], axis=1)
-
-    # Processa os dados
-    input_df = preprocess(input_df=input_df, data=data)
 
     st.write('## Probabilidades de sobrevida:')
 
+    # Leitura dos dados no app
+    input_df = read_data()
+    
     if st.button("Prever"):
         
+        # Adiciona os dados de geolocalização
+        input_df = input_df.merge(IBGE, how='left', on='IBGE')
+        input_df = input_df.merge(IBGEATEN, how='left', on='IBGEATEN')
+        # Cálcula a distância entre as cidades
+        distancias = []
+        for i in range(input_df.shape[0]):
+            geo       = input_df.iloc[i].GEOLOCALIZACAO
+            geo_aten  = input_df.iloc[i].GEOLOCALIZACAO_ATEN
+            dist = geodesic(geo, geo_aten).km
+            distancias.append(dist)
+        input_df['DISTANCIA_CIDADES'] = distancias
+        # Retira as colunas que não são utilizadas
+        input_df = input_df.drop(['GEOLOCALIZACAO', 'GEOLOCALIZACAO_ATEN',
+        'IBGE', 'IBGEATEN'], axis=1)
+
+        # Processa os dados
+        input_df = preprocess(input_df=input_df, data=data)
         #---------------------------------PREDIÇÃO DOS MODELOS----------------------------------------------
         prediction2 = model2.predict_proba(input_df)[0][1]        
         prediction4 = model4.predict_proba(input_df)[0][1]        
