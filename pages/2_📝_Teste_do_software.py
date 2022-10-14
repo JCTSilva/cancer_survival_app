@@ -7,23 +7,14 @@ from sklearn import preprocessing
 import plotly.express as px
 from PIL import Image
 from geopy.distance import geodesic
+import plotly.graph_objects as go
 
-# Lista com as cidades e seus códigos do IBGE
-lista_ibge = []
 
-# open file and read the content in a list
-with open(r'lista_ibge.txt', 'r') as fp:
-    for line in fp:
-        # remove linebreak from a current name
-        # linebreak is the last character of each line
-        x = line[:-1]
-
-        # add current item to the list
-        lista_ibge.append(x)
-
-def read_data():
+def input_data():
     # Separação da página em um número de colunas
-    col1, col2 = st.columns(2)
+    # col1, col2 = st.columns(2)
+    col1 = st.sidebar
+    col2 = st.sidebar
 
     # ['ESCOLARI', 'IDADE', 'SEXO', 'IBGE', 'DIAGPREV', 'BASEDIAG', 'TOPO',
     # 'MORFO', 'EC', 'CIRURGIA', 'RADIO', 'QUIMIO', 'TMO', 'OUTROS', 'RRAS',
@@ -114,6 +105,8 @@ def read_data():
     '3 - Hospital Geral', '5 - Inativos'])
     habilit2 = int(habilit2[0])
 
+    st.sidebar.warning('Todas as informações foram inseridas corretamente?\n\n Se sim, agora clique em "Prever as probabilidades do paciente sobreviver"')
+
     # --------------------------------------------- União dos dados em DataFrame ---------------------------------
     # Criação do conjunto de dados do paciente
     input_dict = {
@@ -138,7 +131,11 @@ def read_data():
     'DTDIAG': dtdiag,
     'DTTRAT': dttrat,
     }
-    
+
+    return input_dict
+
+def read_data(input_dict):
+
     input_df = pd.DataFrame(input_dict, index=[0])
 
     return input_df
@@ -189,6 +186,19 @@ def preprocess(input_df, data):
     
     return df
 
+
+# Lista com as cidades e seus códigos do IBGE
+lista_ibge = []
+# open file and read the content in a list
+with open(r'lista_ibge.txt', 'r') as fp:
+    for line in fp:
+        # remove linebreak from a current name
+        # linebreak is the last character of each line
+        x = line[:-1]
+
+        # add current item to the list
+        lista_ibge.append(x)
+
 ##--------------------------------------CARREGAR MODELOS-------------------------------------------
 with open('modelos/sobrevida_12meses.pickle' , 'rb') as f:
     model2 = pickle.load(f)
@@ -231,22 +241,14 @@ add_selectbox = st.sidebar.selectbox(
     ('Individual', 'Grupo')
 )
 
-st.sidebar.info('Esse aplicativo foi criado para ser uma nova ferramenta na predição da sobrevida de pacientes com câncer.')
-st.sidebar.success('https://www.pycaret.org')
-
-#st.sidebar.image(image_hospital)
-
-st.title("Aplicativo para predição de sobrevida de pacientes com câncer de boca/orofaringe")
-
 if add_selectbox == 'Individual':
 
-    st.write('## Probabilidades de sobrevida:')
-
     # Leitura dos dados no app
-    input_df = read_data()
-    
-    if st.button("Prever"):
+    input_dict = input_data()
+
+    if st.button("Prever as probabilidades do paciente sobreviver"):
         
+        input_df = read_data(input_dict=input_dict)
         # Adiciona os dados de geolocalização
         input_df = input_df.merge(IBGE, how='left', on='IBGE')
         input_df = input_df.merge(IBGEATEN, how='left', on='IBGEATEN')
@@ -271,27 +273,52 @@ if add_selectbox == 'Individual':
         prediction8 = model8.predict_proba(input_df)[0][1]      
         prediction10 = model10.predict_proba(input_df)[0][1]
         
-        output = '' + '### 12 meses: {:.2f}%\n'.format(prediction2*100)
-        output += '### 24 meses: {:.2f}%\n'.format(prediction4*100)
-        output += '### 36 meses: {:.2f}%\n'.format(prediction6*100)
-        output += '### 48 meses: {:.2f}%\n'.format(prediction8*100)
-        output += '### 60 meses: {:.2f}%\n'.format(prediction10*100)
+        output = '' + '##### 12 meses: {:.2f}%\n'.format(prediction2*100)
+        output += '##### 24 meses: {:.2f}%\n'.format(prediction4*100)
+        output += '##### 36 meses: {:.2f}%\n'.format(prediction6*100)
+        output += '##### 48 meses: {:.2f}%\n'.format(prediction8*100)
+        output += '##### 60 meses: {:.2f}%\n'.format(prediction10*100)
         
         st.success(output)
 
         # Dados para o gráfico
-        x = ['12 meses', '24 meses', '36 meses', '48 meses', '60 meses']
+        x = [12,24,36,48,60]
+        x_rev = x[::-1]
 
-        y = [prediction2, prediction4, prediction6, prediction8, prediction10]
+        y1 = [prediction2, prediction4, prediction6, prediction8, prediction10]
 
-        # Create distplot with custom bin_size
-        fig = px.line(input_df, x=x, y=y, markers=True)
-        
+        y1_upper = []
+        y1_lower = []
+        for pred in y1:
+            y1_upper.append(float(pred) + float(pred)*0.1)
+            y1_lower.append(float(pred) - float(pred)*0.1)
+        y1_lower = y1_lower[::-1]
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x=x+x_rev,
+            y=y1_upper+y1_lower,
+            fill='toself',
+            fillcolor='rgba(0,100,80,0.2)',
+            line_color='rgba(255,255,255,0)',
+            showlegend=False,
+            name='Faixa de erro do modelo',
+            line_shape='spline'
+        ))
+        fig.add_trace(go.Scatter(
+            x=x, y=y1,
+            line_color='rgb(0,100,80)',
+            name='Sobrevida ao longo do tempo',
+            line_shape='spline'
+        ))
+
+        fig.update_traces(mode='lines+markers+text')
+
         fig.update_layout(xaxis_title='Tempo após previsão', 
         yaxis_title='Probabilidade do paciente sobreviver', 
         title='Probabilidade de sobrevida ao longo dos meses')
-
-        # Plot!
+        
         st.plotly_chart(fig, use_container_width=True)
 
 elif add_selectbox == 'Grupo':
