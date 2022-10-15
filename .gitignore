@@ -139,9 +139,10 @@ cython_debug/
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Python
 /bin
+/lib64
 /share
 /include
 /etc
 pipenv-proper-names.txt
 Pipfile
-pyenv.cfg
+pyvenv.cfg
