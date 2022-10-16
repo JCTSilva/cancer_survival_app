@@ -32,7 +32,7 @@ def input_data():
     
     ###--------------------------------------FEATURES QUE NÃO SÃO PRÉ-PROCESSADAS------------------
     ## 'IDADE' - input do usuário
-    idade = col1.number_input('Idade do paciente:', min_value=0, max_value=120, step=1, 
+    idade = col1.number_input('Idade do paciente:', min_value=0, max_value=100, step=1, 
     format='%i')
 
     ##'SEXO' - input do sexo
@@ -97,12 +97,27 @@ def input_data():
     ec = col1.selectbox('Estadio clínico:', ['I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
 
     ##'RRAS'
-    rras = col2.selectbox("Código RRAS (Redes Regionais de Atenção à Saúde):", ['11 - São Paulo'])
+    rras = col2.selectbox("Código RRAS (Redes Regionais de Atenção à Saúde):", ['1 - Grande São Paulo', 
+                                                                                '2 - Araçatuba', 
+                                                                                '3 - Araraquara', 
+                                                                                '4 - Baixada Santista', 
+                                                                                '5 - Barretos', 
+                                                                                '6 - Bauru', 
+                                                                                '7 - Campinas', 
+                                                                                '8 - Franca', 
+                                                                                '9 - Marília',
+                                                                                '10 - Piracicaba', 
+                                                                                '11 - Presidente Prudente', 
+                                                                                '12 - Registro', 
+                                                                                '13 - Ribeirão Preto', 
+                                                                                '14 - São João da Boa Vista', 
+                                                                                '15 - São José do Rio Preto',  
+                                                                                '16 - Sorocaba', 
+                                                                                '17 - Taubaté'])
     rras = int(rras[:2])    
 
     ##'HABILIT2'
-    habilit2 = col1.selectbox('Habilitações - Categorias:', ['1 - UNACON', '2 - CACON',
-    '3 - Hospital Geral', '5 - Inativos'])
+    habilit2 = col1.selectbox('Habilitações - Categorias:', ['1 - UNACON', '2 - CACON'])
     habilit2 = int(habilit2[0])
 
     st.sidebar.warning('Todas as informações foram inseridas corretamente?\n\n Se sim, agora clique em "Prever as probabilidades do paciente sobreviver"')
@@ -200,20 +215,42 @@ with open(r'lista_ibge.txt', 'r') as fp:
         lista_ibge.append(x)
 
 ##--------------------------------------CARREGAR MODELOS-------------------------------------------
-with open('modelos/sobrevida_12meses.pickle' , 'rb') as f:
-    model2 = pickle.load(f)
+def carrega_modelos():
 
-with open('modelos/sobrevida_24meses.pickle' , 'rb') as f:
-    model4 = pickle.load(f)
+    with open('modelos/sobrevida_6meses.pickle' , 'rb') as f:
+        model1 = pickle.load(f)
+    
+    with open('modelos/sobrevida_12meses.pickle' , 'rb') as f:
+        model2 = pickle.load(f)
 
-with open('modelos/sobrevida_36meses.pickle' , 'rb') as f:
-    model6 = pickle.load(f)
+    with open('modelos/sobrevida_18meses.pickle' , 'rb') as f:
+        model3 = pickle.load(f)
 
-with open('modelos/sobrevida_48meses.pickle' , 'rb') as f:
-    model8 = pickle.load(f)
+    with open('modelos/sobrevida_24meses.pickle' , 'rb') as f:
+        model4 = pickle.load(f)
 
-with open('modelos/sobrevida_60meses.pickle' , 'rb') as f:
-    model10 = pickle.load(f)
+    with open('modelos/sobrevida_30meses.pickle' , 'rb') as f:
+        model5 = pickle.load(f)
+
+    with open('modelos/sobrevida_36meses.pickle' , 'rb') as f:
+        model6 = pickle.load(f)
+
+    with open('modelos/sobrevida_42meses.pickle' , 'rb') as f:
+        model7 = pickle.load(f)
+
+    with open('modelos/sobrevida_48meses.pickle' , 'rb') as f:
+        model8 = pickle.load(f)
+
+    with open('modelos/sobrevida_54meses.pickle' , 'rb') as f:
+        model9 = pickle.load(f)
+
+    with open('modelos/sobrevida_60meses.pickle' , 'rb') as f:
+        model10 = pickle.load(f)
+
+    return  model1, model2, model3, model4, model5, model6, model7, model8, model9, model10
+
+# Uso da função carrega modelos
+model1, model2, model3, model4, model5, model6, model7, model8, model9, model10 = carrega_modelos()
 
 ##--------------------------------------PREPARA DADOS DE IBGE PARA CALCULAR DISTANCIA-------------------------------------------
 ibge_df = pd.read_csv('dados/ibge.csv')
@@ -267,31 +304,45 @@ if add_selectbox == 'Individual':
         # Processa os dados
         input_df = preprocess(input_df=input_df, data=data)
         #---------------------------------PREDIÇÃO DOS MODELOS----------------------------------------------
+        prediction1 = model1.predict_proba(input_df)[0][1]        
         prediction2 = model2.predict_proba(input_df)[0][1]        
-        prediction4 = model4.predict_proba(input_df)[0][1]        
+        prediction3 = model3.predict_proba(input_df)[0][1]        
+        prediction4 = model4.predict_proba(input_df)[0][1] 
+        prediction5 = model5.predict_proba(input_df)[0][1]        
         prediction6 = model6.predict_proba(input_df)[0][1]        
+        prediction7 = model7.predict_proba(input_df)[0][1]        
         prediction8 = model8.predict_proba(input_df)[0][1]      
+        prediction9 = model9.predict_proba(input_df)[0][1] 
         prediction10 = model10.predict_proba(input_df)[0][1]
         
-        output = '' + '##### 12 meses: {:.2f}%\n'.format(prediction2*100)
+        output = '' + '##### 6 meses: {:.2f}%\n'.format(prediction1*100)
+        output += '##### 12 meses: {:.2f}%\n'.format(prediction2*100)
+        output += '##### 18 meses: {:.2f}%\n'.format(prediction3*100)
         output += '##### 24 meses: {:.2f}%\n'.format(prediction4*100)
-        output += '##### 36 meses: {:.2f}%\n'.format(prediction6*100)
-        output += '##### 48 meses: {:.2f}%\n'.format(prediction8*100)
-        output += '##### 60 meses: {:.2f}%\n'.format(prediction10*100)
+        output += '##### 30 meses: {:.2f}%\n'.format(prediction5*100)
+        output2 = '' + '##### 36 meses: {:.2f}%\n'.format(prediction6*100)
+        output2 += '##### 42 meses: {:.2f}%\n'.format(prediction7*100)
+        output2 += '##### 48 meses: {:.2f}%\n'.format(prediction8*100)
+        output2 += '##### 54 meses: {:.2f}%\n'.format(prediction9*100)
+        output2 += '##### 60 meses: {:.2f}%\n'.format(prediction10*100)
+
+        esq, dir = st.columns(2)
         
-        st.success(output)
+        esq.success(output)
+        dir.success(output2)
 
         # Dados para o gráfico
-        x = [12,24,36,48,60]
+        x = ['6 meses','12 meses','18 meses','24 meses','30 meses',
+            '36 meses','42 meses','48 meses','54 meses','60 meses']
         x_rev = x[::-1]
 
-        y1 = [prediction2, prediction4, prediction6, prediction8, prediction10]
+        y1 = [prediction1, prediction2, prediction3, prediction4, prediction5, prediction6, prediction7, prediction8, prediction9, prediction10]
 
         y1_upper = []
         y1_lower = []
         for pred in y1:
-            y1_upper.append(float(pred) + float(pred)*0.1)
-            y1_lower.append(float(pred) - float(pred)*0.1)
+            y1_upper.append(float(pred) + 0.05)
+            y1_lower.append(float(pred) - 0.05)
         y1_lower = y1_lower[::-1]
 
         fig = go.Figure()
@@ -303,13 +354,13 @@ if add_selectbox == 'Individual':
             fillcolor='rgba(0,100,80,0.2)',
             line_color='rgba(255,255,255,0)',
             showlegend=False,
-            name='Faixa de erro do modelo',
+            name='Faixa de erro',
             line_shape='spline'
         ))
         fig.add_trace(go.Scatter(
             x=x, y=y1,
             line_color='rgb(0,100,80)',
-            name='Sobrevida ao longo do tempo',
+            name='Probabilidade de sobrevivência do paciente',
             line_shape='spline'
         ))
 
@@ -317,7 +368,7 @@ if add_selectbox == 'Individual':
 
         fig.update_layout(xaxis_title='Tempo após previsão', 
         yaxis_title='Probabilidade do paciente sobreviver', 
-        title='Probabilidade de sobrevida ao longo dos meses')
+        title='Probabilidade do paciente sobreviver ao decorrer dos meses')
         
         st.plotly_chart(fig, use_container_width=True)
 
