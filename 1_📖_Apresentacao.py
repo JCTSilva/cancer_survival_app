@@ -175,43 +175,43 @@ with tab4:
         
     # Resultados para a label 6 meses
     with tab40:
-        confusion_matrix_6meses = [[0.66842452,  0.33157548], [0.3371059, 0.6628941]]
+        confusion_matrix_6meses = [[0.74242424, 0.25757576], [0.25858502, 0.74141498]]
         plot_confusion_matriz(confusion_matrix_6meses, tab40)
         roc_curve_plot(r'curvaROC/y_true_6meses.txt', r'curvaROC/y_score_6meses.txt', tab40)
  
     # Resultados para a label 12 meses
     with tab41:
-        confusion_matrix_12meses = [[0.70366133, 0.29633867],[0.30053191, 0.69946809]]
+        confusion_matrix_12meses = [[0.69415808, 0.30584192],[0.29935966, 0.70064034]]
         plot_confusion_matriz(confusion_matrix_12meses, tab41)
         roc_curve_plot(r'curvaROC/y_true_12meses.txt', r'curvaROC/y_score_12meses.txt', tab41)
 
     # Resultados para a label 18 meses
     with tab42:
-        confusion_matrix_18meses = [[0.66842452,  0.33157548], [0.3371059, 0.6628941]]
+        confusion_matrix_18meses = [[0.67272727, 0.32727273], [0.32051282, 0.67948718]]
         plot_confusion_matriz(confusion_matrix_18meses, tab42)
         roc_curve_plot(r'curvaROC/y_true_18meses.txt', r'curvaROC/y_score_18meses.txt', tab42)
         
     # Resultados para a label 24 meses
     with tab43:
-        confusion_matrix_24meses = [[0.66842452,  0.33157548], [0.3371059, 0.6628941]]
+        confusion_matrix_24meses = [[0.66842452, 0.33157548],[0.3371059,  0.6628941 ]]
         plot_confusion_matriz(confusion_matrix_24meses, tab43)
         roc_curve_plot(r'curvaROC/y_true_24meses.txt', r'curvaROC/y_score_24meses.txt', tab43)
  
     # Resultados para a label 30 meses
     with tab44:
-        confusion_matrix_30meses = [[0.66842452,  0.33157548], [0.3371059, 0.6628941]]
+        confusion_matrix_30meses = [[0.65364121, 0.34635879], [0.33837429, 0.66162571]]
         plot_confusion_matriz(confusion_matrix_30meses, tab44)
         roc_curve_plot(r'curvaROC/y_true_30meses.txt', r'curvaROC/y_score_30meses.txt', tab44)
 
     # Resultados para a label 36 meses
     with tab45:
-        confusion_matrix_36meses = [[0.66684902, 0.33315098], [0.33477322, 0.66522678]]
+        confusion_matrix_36meses =[[0.66684902, 0.33315098], [0.33477322, 0.66522678]]
         plot_confusion_matriz(confusion_matrix_36meses, tab45)
         roc_curve_plot(r'curvaROC/y_true_36meses.txt', r'curvaROC/y_score_36meses.txt', tab45)
 
     # Resultados para a label 42 meses
     with tab46:
-        confusion_matrix_42meses = [[0.66842452,  0.33157548], [0.3371059, 0.6628941]]
+        confusion_matrix_42meses = [[0.65554465, 0.34445535],[0.33991537, 0.66008463]]
         plot_confusion_matriz(confusion_matrix_42meses, tab46)
         roc_curve_plot(r'curvaROC/y_true_42meses.txt', r'curvaROC/y_score_42meses.txt', tab46)
 
@@ -223,7 +223,7 @@ with tab4:
 
     # Resultados para a label 54 meses
     with tab48:
-        confusion_matrix_54meses = [[0.65059185, 0.34940815], [0.35306554, 0.64693446]]
+        confusion_matrix_54meses = [[0.64235969, 0.35764031], [0.36601307, 0.63398693]]
         plot_confusion_matriz(confusion_matrix_54meses, tab48)
         roc_curve_plot(r'curvaROC/y_true_54meses.txt', r'curvaROC/y_score_54meses.txt', tab48)
 
