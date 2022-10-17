@@ -47,37 +47,38 @@ lat = st.sidebar
 
 idademin = lat.slider('Idade mínima dos pacientes:', min_value=0, max_value=100, step=1, format='%i')
 idademax = lat.slider('Idade máxima dos pacientes:', min_value=100, max_value=0, step=1, format='%i')
-escolari = lat.selectbox('Escolaridade dos pacientes:', ['Todas', 'Analfabeto', 'Ensino fund. Incompleto', 
+escolari = lat.selectbox('Escolaridade dos pacientes:', ['TODAS AS OPÇÕES', 'Analfabeto', 'Ensino fund. Incompleto', 
 'Ensino fund. Completo', 'Ensino Médio', 'Ensino Superior'])
-ec = lat.selectbox('Estadio clínico:', ['Todos', 'I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
+ec = lat.selectbox('Estadio clínico:', ['TODAS AS OPÇÕES', 'I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
 
 aux_df = data.loc[data.IDADE >= idademin].copy()
 aux_df = data.loc[data.IDADE <= idademax].copy()
-if escolari != 'Todas':
+if escolari != 'TODAS AS OPÇÕES':
     aux_df = data.loc[data.Escolaridade == escolari].copy()
-if ec != 'Todos':
+if ec != 'TODAS AS OPÇÕES':
     aux_df = data.loc[data.EC == ec].copy()
 
 st.markdown(f'### Total de casos: {aux_df.shape[0]}')
 graficos(df=aux_df)
 
-## Define a layer to display on a map
-#layer = pdk.Layer(
-#    "GridLayer",
-#    data,
-#    pickable=True,
-#    extruded=True,
-#    cell_size=10000,
-#    elevation_scale=400,
-#    get_position="COORDENADAS"
-#)
-#
-#view_state = pdk.ViewState(latitude=-24, longitude=-48, zoom=6, bearing=0, pitch=45)
-#
-## Render
-#r = pdk.Deck(
-#    layers=[layer],
-#    initial_view_state=view_state,
-#    tooltip={"text": "{position}\nCount: {count}"},
-#)
-#r.to_html("grid_layer.html")
+# Define a layer to display on a map
+layer = pdk.Layer(
+    "GridLayer",
+    aux_df,
+    pickable=True,
+    extruded=True,
+    cell_size=10000,
+    elevation_scale=400,
+    get_position='LAT_LONG'
+)
+
+view_state = pdk.ViewState(latitude=-24, longitude=-48, zoom=6, bearing=0, pitch=45)
+
+# Render
+r = pdk.Deck(
+    layers=layer,
+    initial_view_state=view_state,
+    tooltip={"text": "{position}\nCount: {count}"},
+)
+
+st.pydeck_chart(pydeck_obj=r)
