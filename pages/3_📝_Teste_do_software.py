@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 
 eureka = Image.open('fotos/eureka2022-logo.png')
 st.image(eureka, use_column_width=True)
+st.warning('Caso não esteja aparente uma barra na lateral esquerda com campos para o uso do aplicativo, siga as instruções.\n\n No canto superior esquerdo deve haver uma seta, a qual abrirá a barra lateral, possibilitando a experiência.')
 
 def input_data():
     # Separação da página em um número de colunas
