@@ -10,6 +10,9 @@ from geopy.distance import geodesic
 import plotly.graph_objects as go
 
 
+eureka = Image.open('fotos/eureka2022-logo.png')
+st.image(eureka, use_column_width=True)
+
 def input_data():
     # Separação da página em um número de colunas
     # col1, col2 = st.columns(2)
@@ -32,8 +35,7 @@ def input_data():
     
     ###--------------------------------------FEATURES QUE NÃO SÃO PRÉ-PROCESSADAS------------------
     ## 'IDADE' - input do usuário
-    idade = col1.number_input('Idade do paciente:', min_value=0, max_value=100, step=1, 
-    format='%i')
+    idade = col1.slider('Idade do paciente:', min_value=0, max_value=100, step=1, format='%i')
 
     ##'SEXO' - input do sexo
     sexo = col1.radio('Código para o sexo do paciente:', ['0 - MASCULINO', '1 - FEMININO'])
@@ -268,11 +270,9 @@ IBGEATEN.columns = ['IBGEATEN', 'GEOLOCALIZACAO_ATEN']
 dfb = pd.read_csv('dados/cancer_boca.csv', index_col='Unnamed: 0')
 dfo = pd.read_csv('dados/cancer_orofaringe.csv', index_col='Unnamed: 0')
 data = pd.concat([dfb, dfo], ignore_index=True)
+analise_data = pd.read_csv('dados/analise_dataset.csv', index_col='Unnamed: 0')
 
 #---------------------------------------RODAR O APP-----------------------------------------------
-image = Image.open('fotos/imt.jpeg')
-st.image(image, use_column_width=False)
-
 add_selectbox = st.sidebar.selectbox(
     'Como gostaria de fazer a predição?',
     ('Individual', 'Grupo')
@@ -283,12 +283,44 @@ if add_selectbox == 'Individual':
     # Leitura dos dados no app
     input_dict = input_data()
 
+
     if st.button("Prever as probabilidades do paciente sobreviver"):
-        
+        # Faz a leitura dos dados para predição 
         input_df = read_data(input_dict=input_dict)
+       
+        # Mostra informação relevante ao usuário
+        idade1 = input_df.IDADE.values[0]
+        escolari1 = input_df.ESCOLARI.values[0]
+        ec1 = input_df.EC.values[0]
+        sex = input_df.SEXO.values[0]
+
+        if sex == 0:
+            sex1 = 'Masculino'
+        else:
+            sex1 = 'Feminino'
+        
+        st.markdown('## Total de casos já vistos pela IA:')
+
+        aux_df = analise_data.loc[analise_data.Sexo_Nome == sex1].copy()
+        st.markdown(f'Casos com mesmo sexo: **{aux_df.shape[0]}**')
+        
+        aux_df = analise_data.loc[analise_data.IDADE >= idade1-5].copy()
+        aux_df = aux_df.loc[aux_df.IDADE <= idade1+5].copy()
+        st.markdown(f'Casos com mesma faixa de idade: **{aux_df.shape[0]}**')
+        
+        aux_df = analise_data.loc[analise_data.EC == ec1].copy()
+        st.markdown(f'Casos com mesmo estadio clínico: **{aux_df.shape[0]}**')
+        
+        aux_df = analise_data.loc[analise_data.Sexo_Nome == sex1].copy()
+        aux_df = aux_df.loc[aux_df.IDADE <= idade1+10].copy()
+        aux_df = aux_df.loc[aux_df.IDADE <= idade1-10].copy()
+        aux_df = aux_df.loc[aux_df.EC == ec1].copy()
+        st.markdown(f'Casos semelhantes nessas informações: **{aux_df.shape[0]}**')
+        
         # Adiciona os dados de geolocalização
         input_df = input_df.merge(IBGE, how='left', on='IBGE')
         input_df = input_df.merge(IBGEATEN, how='left', on='IBGEATEN')
+       
         # Cálcula a distância entre as cidades
         distancias = []
         for i in range(input_df.shape[0]):
@@ -368,7 +400,8 @@ if add_selectbox == 'Individual':
 
         fig.update_layout(xaxis_title='Tempo após previsão', 
         yaxis_title='Probabilidade do paciente sobreviver', 
-        title='Probabilidade do paciente sobreviver ao decorrer dos meses')
+        title='Probabilidade do paciente sobreviver ao decorrer dos meses',
+        yaxis_range=[0,1.1])
         
         st.plotly_chart(fig, use_container_width=True)
 

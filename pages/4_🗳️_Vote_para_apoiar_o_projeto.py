@@ -8,6 +8,10 @@ import plotly.express as px
 from PIL import Image
 from geopy.distance import geodesic
 
+
+eureka = Image.open('fotos/eureka2022-logo.png')
+st.image(eureka, use_column_width=True)
+
 qrcodevoto = Image.open('fotos/qr.png')
 
 st.markdown('### Vote no projeto para apoiar o desenvolvimento do sistema de saúde brasileiro por meio do link ou QR code abaixo.\n')

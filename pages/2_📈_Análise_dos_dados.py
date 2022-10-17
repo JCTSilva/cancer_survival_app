@@ -10,6 +10,10 @@ from geopy.distance import geodesic
 import plotly.graph_objects as go
 import pydeck as pdk
 
+
+eureka = Image.open('fotos/eureka2022-logo.png')
+st.image(eureka, use_column_width=True)
+
 ##--------------------------------------Funções para gerar os gráficos-------------------------------------------
 def graficos(df):
 
@@ -52,11 +56,11 @@ escolari = lat.selectbox('Escolaridade dos pacientes:', ['TODAS AS OPÇÕES', 'A
 ec = lat.selectbox('Estadio clínico:', ['TODAS AS OPÇÕES', 'I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
 
 aux_df = data.loc[data.IDADE >= idademin].copy()
-aux_df = data.loc[data.IDADE <= idademax].copy()
+aux_df = aux_df.loc[aux_df.IDADE <= idademax].copy()
 if escolari != 'TODAS AS OPÇÕES':
-    aux_df = data.loc[data.Escolaridade == escolari].copy()
+    aux_df = aux_df.loc[aux_df.Escolaridade == escolari].copy()
 if ec != 'TODAS AS OPÇÕES':
-    aux_df = data.loc[data.EC == ec].copy()
+    aux_df = aux_df.loc[aux_df.EC == ec].copy()
 
 st.markdown(f'### Total de casos: {aux_df.shape[0]}')
 graficos(df=aux_df)

@@ -8,6 +8,10 @@ import plotly.figure_factory as ff
 import plotly.express as px
 from sklearn.metrics import roc_curve, auc
 
+
+eureka = Image.open('fotos/eureka2022-logo.png')
+st.image(eureka, use_column_width=True)
+
 #Função para gerar o plot de resultados
 def plot_confusion_matriz(confusion_matrix, tab):
 
@@ -103,6 +107,10 @@ perfiljean = Image.open('fotos/JeanCarloTeodoroDaSilva.jpeg')
 perfillucas = Image.open('fotos/LucasSerafim.jpeg')
 perfiljones = Image.open('fotos/Jones.jpeg')
 perfilvanderlei = Image.open('fotos/Vanderlei.jpeg')
+perfilstela = Image.open('fotos/Stela.jpeg')
+perfilmaria = Image.open('fotos/MariaPaula.png')
+fosp = Image.open('fotos/Fosp.png')
+accamargo = Image.open('fotos/ACCamargo.png')
 
 # Definição das tabs
 tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Vídeo teaser', 'Responsáveis', 'Resumo', 'Objetivo', 'Resultados', 'Conclusões', 'Apoio'])
@@ -132,6 +140,8 @@ with tab1:
     if botaolucas:
         col2.success('https://www.linkedin.com/in/lucas-serafim/')
 
+    col1, col2 = tab1.columns(2)
+    
     col1.markdown('## Orientador:')
     col1.image(perfiljones, caption='Jones Eduardo Egydio', width=200)
     botaojones = col1.button("LinkedIn de Jones")
@@ -145,10 +155,15 @@ with tab1:
         col2.success('https://www.linkedin.com/in/vparro/')
     
 with tab2:
-    tab2.markdown('Este trabalho trata do desenvolvimento de uma inteligência artificial (IA) para prever a sobrevida de pacientes com câncer de boca ou de orofaringe. Os resultados providos pela IA são comparados com os dos modelos de predição utilizados atualmente na área médica. Esta abordagem mostra potencial para melhorar implementações na área de saúde.')
+    tab2.markdown('''Este trabalho trata do desenvolvimento de uma inteligência artificial (IA) para prever a sobrevida de pacientes com câncer 
+    de boca ou de orofaringe. Os resultados providos pela IA são comparados com os dos modelos de predição utilizados atualmente na área médica. 
+    Esta abordagem mostra potencial para melhorar implementações na área de saúde.''')
     
 with tab3:
-    pass
+    tab3.markdown('''O objetivo do projeto foi desenvolver um algoritmo de aprendizado de máquina, capaz de realizar a predição da probabilidade 
+    de sobrevida de um paciente acometido por determinado tipo de câncer ao longo de 5 anos, após o início do tratamento.\n\n O projeto também visa 
+    realizar um estudo comparativo entre os resultados apresentados pelo modelo desenvolvido e a utilização das técnicas utilizadas atualmente 
+    pela medicina.''')
 
 with tab4:
 
@@ -219,7 +234,25 @@ with tab4:
         roc_curve_plot(r'curvaROC/y_true_60meses.txt', r'curvaROC/y_score_60meses.txt', tab49)
 
 with tab5:
-    pass
+    tab5.markdown('''Podemos concluir que a ferramenta desenvolvida no projeto pode ser usada, por médicos e outros profissionais da área da saúde 
+    para realizar a estimativa da resposta de um paciente a determinado tratamento.\n\n O uso da ferramenta permite que médicos realizem simulações de 
+    cenários e determinem qual o melhor tipo de tratamento para cada paciente, individualmente.\n\nO algoritmo desenvolvido apresenta resultados de 
+    acurácia equivalentes, e em alguns intervalos, melhores, em relação aos métodos utilizados atualmente na área médica.''')
 
 with tab6:
-    pass
+
+    tab6.markdown("## Apoio da FOSP:")
+    # Separação das colunas
+    col1, col2 = tab6.columns(2)
+
+    col1.image(perfilstela, caption='Stela Verzinhasse Peres', width=200)
+    col2.image(fosp, caption='Fundação Oncocentro de São Paulo - FOSP', width=300)
+    botaostela = col1.button("LinkedIn de Stela")
+    if botaostela:
+        col1.success('https://www.linkedin.com/in/stela-verzinhasse-peres-a1573a9a/')
+
+    tab6.markdown("## Apoio do AC Camargo:")
+    
+    col1, col2 = tab6.columns(2)
+    col1.image(perfilmaria, caption='Maria Paula Curado', width=200)
+    col2.image(accamargo, caption='AC Camargo', width=300)
