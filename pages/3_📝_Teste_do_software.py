@@ -9,98 +9,88 @@ from PIL import Image
 from geopy.distance import geodesic
 import plotly.graph_objects as go
 
+##---------------------------------------------------------------Funções--------------------------------------------------------
+def input_data(lista_ibge):
+    # Variável que aloca as informações na barra lateral
+    lateral = st.sidebar
 
-eureka = Image.open('fotos/eureka2022-logo.png')
-st.image(eureka, use_column_width=True)
-st.warning('Caso não esteja aparente uma barra na lateral esquerda com campos para o uso do aplicativo, siga as instruções.\n\n No canto superior esquerdo deve haver uma seta, a qual abrirá a barra lateral, possibilitando a experiência.')
-
-def input_data():
-    # Separação da página em um número de colunas
-    # col1, col2 = st.columns(2)
-    col1 = st.sidebar
-    col2 = st.sidebar
-
-    # ['ESCOLARI', 'IDADE', 'SEXO', 'IBGE', 'DIAGPREV', 'BASEDIAG', 'TOPO',
-    # 'MORFO', 'EC', 'CIRURGIA', 'RADIO', 'QUIMIO', 'TMO', 'OUTROS', 'RRAS',
-    # 'RECNENHUM', 'IBGEATEN', 'HABILIT2', 'TRATDIAG', 'DISTANCIA_CIDADES',
-    # 'SOBREVIDA_12MESES']
-
+    ##--------------------------------------------------------------Inputs necessários para os modelos--------------------------------------------------------------
     ###--------------------------------------DISTANCIA_CIDADES-------------------------------------
     ## 'IBGE' - input relacionado à residência
-    ibge = col1.selectbox('Código da cidade de residência do paciente segundo IBGE com digito verificado:', lista_ibge)
+    ibge = lateral.selectbox('Código da cidade de residência do paciente segundo IBGE com digito verificado:', lista_ibge)
     ibge = int(ibge[:7])
 
     ## 'IBGEATEN' - input relacionado ao atendimento
-    ibgeaten = col1.selectbox('Código da cidade de atendimento do paciente segundo IBGE com digito verificado:', lista_ibge)
+    ibgeaten = lateral.selectbox('Código da cidade de atendimento do paciente segundo IBGE com digito verificado:', lista_ibge)
     ibgeaten = int(ibgeaten[:7])
     
     ###--------------------------------------FEATURES QUE NÃO SÃO PRÉ-PROCESSADAS------------------
     ## 'IDADE' - input do usuário
-    idade = col1.slider('Idade do paciente:', min_value=0, max_value=100, step=1, format='%i')
+    idade = lateral.slider('Idade do paciente:', min_value=0, max_value=100, step=1, format='%i')
 
     ##'SEXO' - input do sexo
-    sexo = col1.radio('Código para o sexo do paciente:', ['0 - MASCULINO', '1 - FEMININO'])
+    sexo = lateral.radio('Código para o sexo do paciente:', ['0 - MASCULINO', '1 - FEMININO'])
     sexo = sexo[0]
 
     ##'CIRURGIA'
-    cirurgia = col2.radio("Tratamento recebido no hospital = CIRURGIA", ['0 - NÃO', '1 - SIM'])
+    cirurgia = lateral.radio("Tratamento recebido no hospital = CIRURGIA", ['0 - NÃO', '1 - SIM'])
     cirurgia = cirurgia[0]
 
     ##'RADIO'
-    radio = col2.radio("Tratamento recebido no hospital = RADIOTERAPIA", ['0 - NÃO', '1 - SIM'])
+    radio = lateral.radio("Tratamento recebido no hospital = RADIOTERAPIA", ['0 - NÃO', '1 - SIM'])
     radio = radio[0]
 
     ##'QUIMIO'
-    quimio = col2.radio("Tratamento recebido no hospital = QUIMIOTERAPIA", ['0 - NÃO', '1 - SIM'])
+    quimio = lateral.radio("Tratamento recebido no hospital = QUIMIOTERAPIA", ['0 - NÃO', '1 - SIM'])
     quimio = quimio[0]
 
     ##'TMO'
-    tmo = col2.radio("Tratamento recebido no hospital = TMO", ['0 - NÃO', '1 - SIM'])
+    tmo = lateral.radio("Tratamento recebido no hospital = TMO", ['0 - NÃO', '1 - SIM'])
     tmo = tmo[0]
 
     ##'OUTROS'
-    outros = col2.radio("Tratamento recebido no hospital = OUTROS", ['0 - NÃO', '1 - SIM'])
+    outros = lateral.radio("Tratamento recebido no hospital = OUTROS", ['0 - NÃO', '1 - SIM'])
     outros = outros[0]
     
     ##'RECNENHUM'
-    recnenhum = col2.radio("Paciente sem recidiva:", ['0 - NÃO', '1 - SIM'])
+    recnenhum = lateral.radio("Paciente sem recidiva:", ['0 - NÃO', '1 - SIM'])
     recnenhum = recnenhum[0]
 
     ###-------------------------------------------------TRATDIAG---------------------------
     ## 'DTDIAG' - input da data do diagnóstico
-    dtdiag = col1.date_input('Data do diagnóstico:')
+    dtdiag = lateral.date_input('Data do diagnóstico:')
 
     ## 'DTTRAT' - input data do início do tratamento
-    dttrat = col1.date_input("Data do início do tratamento")
+    dttrat = lateral.date_input("Data do início do tratamento")
 
-    ###-------------------------------------------------FEATURES PRÉ-PROCESSADAS-------------------------
+    ###-------------------------------------------------FEATURES PRÉ-PROCESSADAS-----------
     ##'ESCOLARI' - input da escolaridade
-    escolari = col1.selectbox('Código para escolaridade do paciente:', ['1 - ANALFABETO', '2 - ENS. FUND.INCOMPLETO', 
+    escolari = lateral.selectbox('Código para escolaridade do paciente:', ['1 - ANALFABETO', '2 - ENS. FUND.INCOMPLETO', 
     '3 - ENS. FUND.COMPLETO', '4 - ENSINO MÉDIO', '5 - SUPERIOR'])
     escolari = int(escolari[0])
 
     ##'DIAGPREV' - input sobre diagnóstico e/ou tratamento anteriores 
-    diagprev = col1.selectbox('Diagnóstico e tratamento anterior:', ['1 - SEM DIAGNÓSTICO NEM TRATAMENTO', '2 - COM DIAGNÓSTICO E SEM TRATAMENTO'])
+    diagprev = lateral.selectbox('Diagnóstico e tratamento anterior:', ['1 - SEM DIAGNÓSTICO NEM TRATAMENTO', '2 - COM DIAGNÓSTICO E SEM TRATAMENTO'])
     diagprev = int(diagprev[0])
 
     ##'BASEDIAG' - input do código da base do diagnóstico
-    basediag = col1.selectbox('Código da base do diagnóstico:', ['1 - EXAME CLINICO', '2 - RECURSOS AUXILIARES NÃO MICROSCÓPICOS', '3 - CONFIRMAÇÃO MICROSCÓPICA'])
+    basediag = lateral.selectbox('Código da base do diagnóstico:', ['1 - EXAME CLINICO', '2 - RECURSOS AUXILIARES NÃO MICROSCÓPICOS', '3 - CONFIRMAÇÃO MICROSCÓPICA'])
     basediag = int(basediag[0])
 
     ##'TOPO' - input da código da topografia
-    topo = col1.selectbox('Código da topografia (Formato:C999):', ['C019', 'C109', 'C029', 'C021', 'C049', 'C051', 'C099', 'C069', 'C062', 'C091', 'C108', 'C102', 
+    topo = lateral.selectbox('Código da topografia (Formato:C999):', ['C019', 'C109', 'C029', 'C021', 'C049', 'C051', 'C099', 'C069', 'C062', 'C091', 'C108', 'C102', 
     'C040', 'C050', 'C060', 'C090', 'C031', 'C059', 'C100', 'C052', 'C041', 'C020', 'C028', 'C103', 'C039', 'C048', 'C004', 'C022', 'C098', 'C009', 'C030', 'C101', 
     'C058', 'C006', 'C023', 'C061', 'C068', 'C005', 'C008', 'C003'])
 
     ##'MORFO' - input do código da morfologia
-    morfo = col1.selectbox('Código da morfologia (Formato:99999):', [80703, 80723, 80733, 80743])
+    morfo = lateral.selectbox('Código da morfologia (Formato:99999):', [80703, 80723, 80733, 80743])
     morfo = int(morfo)
     
     ##'EC' - input do estádio clínico
-    ec = col1.selectbox('Estadio clínico:', ['I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
+    ec = lateral.selectbox('Estadio clínico:', ['I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
 
     ##'RRAS'
-    rras = col2.selectbox("Código RRAS (Redes Regionais de Atenção à Saúde):", ['1 - Grande São Paulo', 
+    rras = lateral.selectbox("Código RRAS (Redes Regionais de Atenção à Saúde):", ['1 - Grande São Paulo', 
                                                                                 '2 - Araçatuba', 
                                                                                 '3 - Araraquara', 
                                                                                 '4 - Baixada Santista', 
@@ -120,12 +110,13 @@ def input_data():
     rras = int(rras[:2])    
 
     ##'HABILIT2'
-    habilit2 = col1.selectbox('Habilitações - Categorias:', ['1 - UNACON', '2 - CACON'])
+    habilit2 = lateral.selectbox('Habilitações - Categorias:', ['1 - UNACON', '2 - CACON'])
     habilit2 = int(habilit2[0])
 
+    ##--------------------------------------------------------------Tranformação dos inputs--------------------------------------------------------------
+    # Aviso para o usuário entender o próximo passo
     st.sidebar.warning('Todas as informações foram inseridas corretamente?\n\n Se sim, agora clique em "Prever as probabilidades do paciente sobreviver"')
-
-    # --------------------------------------------- União dos dados em DataFrame ---------------------------------
+    
     # Criação do conjunto de dados do paciente
     input_dict = {
     'ESCOLARI': escolari, 
@@ -152,12 +143,12 @@ def input_data():
 
     return input_dict
 
+@st.experimental_memo
 def read_data(input_dict):
-
     input_df = pd.DataFrame(input_dict, index=[0])
-
     return input_df
 
+@st.experimental_memo
 def preprocess(input_df, data):
     # Copia os dados
     df = input_df.copy()
@@ -204,20 +195,7 @@ def preprocess(input_df, data):
     
     return df
 
-
-# Lista com as cidades e seus códigos do IBGE
-lista_ibge = []
-# open file and read the content in a list
-with open(r'lista_ibge.txt', 'r') as fp:
-    for line in fp:
-        # remove linebreak from a current name
-        # linebreak is the last character of each line
-        x = line[:-1]
-
-        # add current item to the list
-        lista_ibge.append(x)
-
-##--------------------------------------CARREGAR MODELOS-------------------------------------------
+@st.experimental_singleton
 def carrega_modelos():
 
     with open('modelos/sobrevida_6meses.pickle' , 'rb') as f:
@@ -252,28 +230,90 @@ def carrega_modelos():
 
     return  model1, model2, model3, model4, model5, model6, model7, model8, model9, model10
 
-# Uso da função carrega modelos
+@st.experimental_memo
+def read_ibge_list(path):
+    # Lista com as cidades e seus códigos do IBGE
+    lista_ibge = []
+    # open file and read the content in a list
+    with open(path, 'r') as fp:
+        for line in fp:
+            # remove linebreak from a current name
+            # linebreak is the last character of each line
+            x = line[:-1]
+
+            # add current item to the list
+            lista_ibge.append(x)
+
+    return lista_ibge
+
+@st.experimental_memo(suppress_st_warning=True)
+def read_analise_dataset(sex1, idade1, ec1):
+    analise_data = pd.read_csv('dados/analise_dataset.csv', index_col='Unnamed: 0')
+
+    aux_df = analise_data.loc[analise_data.Sexo_Nome == sex1].copy()
+    st.markdown(f'Casos com mesmo sexo: **{aux_df.shape[0]}**')
+    
+    aux_df = analise_data.loc[analise_data.IDADE >= idade1-5].copy()
+    aux_df = aux_df.loc[aux_df.IDADE <= idade1+5].copy()
+    st.markdown(f'Casos com mesma faixa de idade: **{aux_df.shape[0]}**')
+    
+    aux_df = analise_data.loc[analise_data.EC == ec1].copy()
+    st.markdown(f'Casos com mesmo estadio clínico: **{aux_df.shape[0]}**')
+    
+    aux_df = analise_data.loc[analise_data.Sexo_Nome == sex1].copy()
+    aux_df = aux_df.loc[aux_df.IDADE <= idade1+10].copy()
+    aux_df = aux_df.loc[aux_df.IDADE <= idade1-10].copy()
+    aux_df = aux_df.loc[aux_df.EC == ec1].copy()
+    st.markdown(f'Casos semelhantes nessas informações: **{aux_df.shape[0]}**')
+
+@st.experimental_memo
+def read_dados_completos():
+    dfb = pd.read_csv('dados/cancer_boca.csv', index_col='Unnamed: 0')
+    dfo = pd.read_csv('dados/cancer_orofaringe.csv', index_col='Unnamed: 0')
+    dataframe = pd.concat([dfb, dfo], ignore_index=True)
+    return dataframe
+
+@st.experimental_memo
+def adiciona_distancia(input_df):
+    ibge_df = pd.read_csv('dados/ibge.csv')
+
+    ibge_df['GEOLOC'] = list(zip(ibge_df.latitude, ibge_df.longitude))
+
+    IBGE = ibge_df[['codigo_ibge', 'GEOLOC']].copy()
+    IBGE.columns = ['IBGE', 'GEOLOCALIZACAO']
+
+    IBGEATEN = ibge_df[['codigo_ibge', 'GEOLOC']].copy()
+    IBGEATEN.columns = ['IBGEATEN', 'GEOLOCALIZACAO_ATEN']
+
+    # Adiciona os dados de geolocalização
+    input_df = input_df.merge(IBGE, how='left', on='IBGE')
+    input_df = input_df.merge(IBGEATEN, how='left', on='IBGEATEN')
+
+    # Cálcula a distância entre as cidades
+    distancias = []
+    for i in range(input_df.shape[0]):
+        geo       = input_df.iloc[i].GEOLOCALIZACAO
+        geo_aten  = input_df.iloc[i].GEOLOCALIZACAO_ATEN
+        dist = geodesic(geo, geo_aten).km
+        distancias.append(dist)
+    input_df['DISTANCIA_CIDADES'] = distancias
+    # Retira as colunas que não são utilizadas
+    input_df = input_df.drop(['GEOLOCALIZACAO', 'GEOLOCALIZACAO_ATEN',
+    'IBGE', 'IBGEATEN'], axis=1)
+
+    return input_df
+
+
+##---------------------------------------------------------------Corpo da página--------------------------------------------------------
+# Imagem do Eureka
+eureka = Image.open('fotos/eureka2022-logo.png')
+st.image(eureka, use_column_width=True)
+# Aviso para ajudar usuários a saberem usar
+st.warning('Caso não esteja aparente uma barra na lateral esquerda com campos para o uso do aplicativo, siga as instruções.\n\n No canto superior esquerdo deve haver uma seta, a qual abrirá a barra lateral, possibilitando a experiência.')
+# Carrega os modelos de ML
 model1, model2, model3, model4, model5, model6, model7, model8, model9, model10 = carrega_modelos()
 
-##--------------------------------------PREPARA DADOS DE IBGE PARA CALCULAR DISTANCIA-------------------------------------------
-ibge_df = pd.read_csv('dados/ibge.csv')
 
-ibge_df['GEOLOC'] = list(zip(ibge_df.latitude, ibge_df.longitude))
-    
-IBGE = ibge_df[['codigo_ibge', 'GEOLOC']].copy()
-IBGE.columns = ['IBGE', 'GEOLOCALIZACAO']
-
-IBGEATEN = ibge_df[['codigo_ibge', 'GEOLOC']].copy()
-IBGEATEN.columns = ['IBGEATEN', 'GEOLOCALIZACAO_ATEN']
-
-
-##--------------------------------------PREPARA DADOS PARA PRÉ-PROCESSAMENTO-------------------------------------------
-dfb = pd.read_csv('dados/cancer_boca.csv', index_col='Unnamed: 0')
-dfo = pd.read_csv('dados/cancer_orofaringe.csv', index_col='Unnamed: 0')
-data = pd.concat([dfb, dfo], ignore_index=True)
-analise_data = pd.read_csv('dados/analise_dataset.csv', index_col='Unnamed: 0')
-
-#---------------------------------------RODAR O APP-----------------------------------------------
 add_selectbox = st.sidebar.selectbox(
     'Como gostaria de fazer a predição?',
     ('Individual', 'Grupo')
@@ -281,62 +321,42 @@ add_selectbox = st.sidebar.selectbox(
 
 if add_selectbox == 'Individual':
 
+    # Lista de opções das cidades
+    path_ibge = r'dados/lista_ibge.txt'
+    lista_ibge = read_ibge_list(path_ibge)
     # Leitura dos dados no app
-    input_dict = input_data()
+    input_dict = input_data(lista_ibge=lista_ibge)
 
 
     if st.button("Prever as probabilidades do paciente sobreviver"):
-        # Faz a leitura dos dados para predição 
+
+        st.experimental_memo.clear()
+
+        st.experimental_singleton.clear()
+
+        # Leitura dos dados em DataFrame
         input_df = read_data(input_dict=input_dict)
-       
         # Mostra informação relevante ao usuário
         idade1 = input_df.IDADE.values[0]
         escolari1 = input_df.ESCOLARI.values[0]
         ec1 = input_df.EC.values[0]
         sex = input_df.SEXO.values[0]
 
-        if sex == 0:
+        if int(sex) == 0:
             sex1 = 'Masculino'
-        else:
+        if int(sex) == 1:
             sex1 = 'Feminino'
         
         st.markdown('## Total de casos já vistos pela IA:')
 
-        aux_df = analise_data.loc[analise_data.Sexo_Nome == sex1].copy()
-        st.markdown(f'Casos com mesmo sexo: **{aux_df.shape[0]}**')
-        
-        aux_df = analise_data.loc[analise_data.IDADE >= idade1-5].copy()
-        aux_df = aux_df.loc[aux_df.IDADE <= idade1+5].copy()
-        st.markdown(f'Casos com mesma faixa de idade: **{aux_df.shape[0]}**')
-        
-        aux_df = analise_data.loc[analise_data.EC == ec1].copy()
-        st.markdown(f'Casos com mesmo estadio clínico: **{aux_df.shape[0]}**')
-        
-        aux_df = analise_data.loc[analise_data.Sexo_Nome == sex1].copy()
-        aux_df = aux_df.loc[aux_df.IDADE <= idade1+10].copy()
-        aux_df = aux_df.loc[aux_df.IDADE <= idade1-10].copy()
-        aux_df = aux_df.loc[aux_df.EC == ec1].copy()
-        st.markdown(f'Casos semelhantes nessas informações: **{aux_df.shape[0]}**')
-        
-        # Adiciona os dados de geolocalização
-        input_df = input_df.merge(IBGE, how='left', on='IBGE')
-        input_df = input_df.merge(IBGEATEN, how='left', on='IBGEATEN')
-       
-        # Cálcula a distância entre as cidades
-        distancias = []
-        for i in range(input_df.shape[0]):
-            geo       = input_df.iloc[i].GEOLOCALIZACAO
-            geo_aten  = input_df.iloc[i].GEOLOCALIZACAO_ATEN
-            dist = geodesic(geo, geo_aten).km
-            distancias.append(dist)
-        input_df['DISTANCIA_CIDADES'] = distancias
-        # Retira as colunas que não são utilizadas
-        input_df = input_df.drop(['GEOLOCALIZACAO', 'GEOLOCALIZACAO_ATEN',
-        'IBGE', 'IBGEATEN'], axis=1)
+        read_analise_dataset(sex1, idade1, ec1)
+        data = read_dados_completos()
 
+        input_df = adiciona_distancia(input_df)
         # Processa os dados
         input_df = preprocess(input_df=input_df, data=data)
         #---------------------------------PREDIÇÃO DOS MODELOS----------------------------------------------
+        # Uso dos modelos de ML
         prediction1 = model1.predict_proba(input_df)[0][1]        
         prediction2 = model2.predict_proba(input_df)[0][1]        
         prediction3 = model3.predict_proba(input_df)[0][1]        

@@ -11,7 +11,6 @@ from sklearn.metrics import roc_curve, auc
 
 eureka = Image.open('fotos/eureka2022-logo.png')
 st.image(eureka, use_column_width=True)
-st.warning('Caso não esteja aparente uma barra na lateral esquerda com campos para o uso do aplicativo, siga as instruções.\n\n No canto superior esquerdo deve haver uma seta, a qual abrirá a barra lateral, possibilitando a experiência.')
 
 #Função para gerar o plot de resultados
 def plot_confusion_matriz(confusion_matrix, tab):
@@ -32,7 +31,7 @@ def plot_confusion_matriz(confusion_matrix, tab):
                             x=0.5,
                             y=-0.15,
                             showarrow=False,
-                            text="Predicted value",
+                            text="<b>Predicted value<b>",
                             xref="paper",
                             yref="paper"))
 
@@ -41,19 +40,19 @@ def plot_confusion_matriz(confusion_matrix, tab):
                             x=-0.35,
                             y=0.5,
                             showarrow=False,
-                            text="Real value",
+                            text="<b>Real value<b>",
                             textangle=-90,
                             xref="paper",
                             yref="paper"))
 
     # adjust margins to make room for yaxis title
-    fig.update_layout(margin=dict(t=50, l=200))
+    fig.update_layout(margin=dict(t=40, l=200))
 
     # add colorbar
     fig['data'][0]['showscale'] = True
     # Plot!
     acuracia = (float(confusion_matrix[0][0])+float(confusion_matrix[1][1]))/2
-    fig.update_layout(title=f'Matrix confusão (Acurácia={acuracia:.2f})')
+    fig.update_layout(title=f'<i><b>Matrix confusão<b><i> (Acurácia={100*acuracia:.1f}%)')
     tab.plotly_chart(fig, use_container_width=True)
 
 def roc_curve_plot(path1, path2, tab):
@@ -86,7 +85,7 @@ def roc_curve_plot(path1, path2, tab):
 
     fig = px.area(
         x=fpr, y=tpr,
-        labels=dict(x='False Positive Rate', y='True Positive Rate'),
+        labels=dict(x='<b>False Positive Rate<b>', y='<b>True Positive Rate<b>'),
         width=700, height=500
     )
     fig.add_shape(
@@ -98,7 +97,7 @@ def roc_curve_plot(path1, path2, tab):
     fig.update_xaxes(constrain='domain')
     
     # Plot!
-    fig.update_layout(title=f'Curva ROC (AUC={auc(fpr, tpr):.2f})')
+    fig.update_layout(title=f'<i><b>Curva ROC (AUC={100*auc(fpr, tpr):.1f}%)<i><b>')
     tab.plotly_chart(fig, use_container_width=True)
 
 # Definicao das imagens e videos
@@ -131,7 +130,7 @@ with tab1:
     # Separação das colunas
     col1, col2 = tab1.columns(2)
 
-    col1.image(perfiljean, caption='Jean Carlo T. da Silva', width=275)
+    col1.image(perfiljean, caption='Jean Carlo Teodoro da Silva', width=275)
     botaojean = col1.button("LinkedIn de Jean Carlo")
     if botaojean:
         col1.success('https://www.linkedin.com/in/jean-carlo-teodoro-da-silva/')
@@ -168,8 +167,15 @@ with tab3:
 
 with tab4:
 
-    tab4.markdown('## Modelos de Inteligência Artificial (IA) em dados de validação:')
+    tab4.markdown('### Desempenho médio dos modelos de Inteligência Artificial (IA):')
     
+    col1, col2 = tab4.columns(2)
+
+    col1.success('#### ***Acurácia = 66,8%***')
+    col2.success('#### ***ROC (AUC) = 73,2%***')
+    
+    tab4.markdown('### Desempenho específico de cada modelo de IA:')
+
     # Definição das tabs
     tab40, tab41, tab42, tab43, tab44, tab45, tab46, tab47, tab48, tab49 = st.tabs(['6 meses', '12 meses', '18 meses', '24 meses', '30 meses', '36 meses', '42 meses', '48 meses', '54 meses', '60 meses',])
 

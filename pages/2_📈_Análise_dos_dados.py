@@ -13,9 +13,8 @@ import pydeck as pdk
 
 eureka = Image.open('fotos/eureka2022-logo.png')
 st.image(eureka, use_column_width=True)
-st.warning('Caso não esteja aparente uma barra na lateral esquerda com campos para o uso do aplicativo, siga as instruções.\n\n No canto superior esquerdo deve haver uma seta, a qual abrirá a barra lateral, possibilitando a experiência.')
 
-##--------------------------------------Funções para gerar os gráficos-------------------------------------------
+##--------------------------------------Função para gerar os gráficos-------------------------------------------
 def graficos(df):
 
     data = df.copy()
@@ -43,26 +42,46 @@ def graficos(df):
     fig.update_layout(xaxis_title_text='Estadio clínico',yaxis_title_text='Porcentagem')
     st.plotly_chart(fig, use_container_width=True)
 
-
-
 ##--------------------------------------Leitura dos dados do banco-------------------------------------------
-data = pd.read_csv('dados/analise_dataset.csv', index_col='Unnamed: 0')
+@st.experimental_memo
+def le_analise_dataset():
+    dataframe = pd.read_csv('dados/analise_dataset.csv', index_col='Unnamed: 0')
+    return dataframe
 
+##--------------------------------------Filtro dos dados para análise-------------------------------------------
+@st.experimental_memo
+def filtra_dados(dataframe):
+    
+    return ""
+##--------------------------------------Filtro dos dados para análise-------------------------------------------
+@st.experimental_memo
+def filtra_dados(dataframe, idademin, idademax, escolari, ec):
+    aux_df = dataframe.loc[dataframe.IDADE >= idademin].copy()
+    aux_df = aux_df.loc[aux_df.IDADE <= idademax].copy()
+    if escolari != 'TODAS AS OPÇÕES':
+        aux_df = aux_df.loc[aux_df.Escolaridade == escolari].copy()
+    if ec != 'TODAS AS OPÇÕES':
+        aux_df = aux_df.loc[aux_df.EC == ec].copy()
+    return aux_df
+
+##--------------------------------------Setup de variáveis-------------------------------------------
+data = le_analise_dataset()
+
+##--------------------------------------Corpo da página-------------------------------------------
+# Variável para alocar informações na barra lateral
 lat = st.sidebar
 
+# Input das variáveis
 idademin = lat.slider('Idade mínima dos pacientes:', min_value=0, max_value=100, step=1, format='%i')
 idademax = lat.slider('Idade máxima dos pacientes:', min_value=100, max_value=0, step=1, format='%i')
 escolari = lat.selectbox('Escolaridade dos pacientes:', ['TODAS AS OPÇÕES', 'Analfabeto', 'Ensino fund. Incompleto', 
 'Ensino fund. Completo', 'Ensino Médio', 'Ensino Superior'])
 ec = lat.selectbox('Estadio clínico:', ['TODAS AS OPÇÕES', 'I', 'II', 'III', 'IV', 'IVA', 'IVB', 'IVC'])
 
-aux_df = data.loc[data.IDADE >= idademin].copy()
-aux_df = aux_df.loc[aux_df.IDADE <= idademax].copy()
-if escolari != 'TODAS AS OPÇÕES':
-    aux_df = aux_df.loc[aux_df.Escolaridade == escolari].copy()
-if ec != 'TODAS AS OPÇÕES':
-    aux_df = aux_df.loc[aux_df.EC == ec].copy()
+# Filtro dos dados para gerar os gráficos
+aux_df = filtra_dados(data, idademin, idademax, escolari, ec)
 
+# Output dos resultados
 st.markdown(f'### Total de casos: {aux_df.shape[0]}')
 graficos(df=aux_df)
 
