@@ -413,7 +413,7 @@ if add_selectbox == 'Individual':
         fig.add_trace(go.Scatter(
             x=x, y=y1,
             line_color='rgb(0,100,80)',
-            name='Probabilidade de sobrevivência do paciente',
+            name='Probabilidade de sobrevivência',
             line_shape='spline'
         ))
 
