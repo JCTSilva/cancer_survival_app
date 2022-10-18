@@ -310,8 +310,6 @@ eureka = Image.open('fotos/eureka2022-logo.png')
 st.image(eureka, use_column_width=True)
 # Aviso para ajudar usuários a saberem usar
 st.warning('Caso não esteja aparente uma barra na lateral esquerda com campos para o uso do aplicativo, siga as instruções.\n\n No canto superior esquerdo deve haver uma seta, a qual abrirá a barra lateral, possibilitando a experiência.')
-# Carrega os modelos de ML
-model1, model2, model3, model4, model5, model6, model7, model8, model9, model10 = carrega_modelos()
 
 
 add_selectbox = st.sidebar.selectbox(
@@ -357,6 +355,8 @@ if add_selectbox == 'Individual':
         input_df = preprocess(input_df=input_df, data=data)
         #---------------------------------PREDIÇÃO DOS MODELOS----------------------------------------------
         # Uso dos modelos de ML
+        # Carrega os modelos de ML
+        model1, model2, model3, model4, model5, model6, model7, model8, model9, model10 = carrega_modelos()
         prediction1 = model1.predict_proba(input_df)[0][1]        
         prediction2 = model2.predict_proba(input_df)[0][1]        
         prediction3 = model3.predict_proba(input_df)[0][1]        
