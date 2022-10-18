@@ -419,9 +419,9 @@ if add_selectbox == 'Individual':
 
         fig.update_traces(mode='lines+markers+text')
 
-        fig.update_layout(xaxis_title='Tempo após previsão', 
-        yaxis_title='Probabilidade do paciente sobreviver', 
-        title='Probabilidade do paciente sobreviver ao decorrer dos meses',
+        fig.update_layout(xaxis_title='<b>Tempo após previsão<b>', 
+        yaxis_title='<b>Probabilidade do paciente sobreviver<b>', 
+        title='<b><i>Probabilidade do paciente sobreviver ao decorrer dos meses<b><i>',
         yaxis_range=[0,1.1])
         
         st.plotly_chart(fig, use_container_width=True)
