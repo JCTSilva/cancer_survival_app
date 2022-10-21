@@ -84,25 +84,3 @@ aux_df = filtra_dados(data, idademin, idademax, escolari, ec)
 # Output dos resultados
 st.markdown(f'### Total de casos: {aux_df.shape[0]}')
 graficos(df=aux_df)
-
-# Define a layer to display on a map
-layer = pdk.Layer(
-    "GridLayer",
-    aux_df,
-    pickable=True,
-    extruded=True,
-    cell_size=10000,
-    elevation_scale=400,
-    get_position='LAT_LONG'
-)
-
-view_state = pdk.ViewState(latitude=-24, longitude=-48, zoom=6, bearing=0, pitch=45)
-
-# Render
-r = pdk.Deck(
-    layers=layer,
-    initial_view_state=view_state,
-    tooltip={"text": "{position}\nCount: {count}"},
-)
-
-st.pydeck_chart(pydeck_obj=r)

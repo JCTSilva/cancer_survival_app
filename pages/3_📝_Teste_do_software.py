@@ -398,32 +398,15 @@ if add_selectbox == 'Individual':
             y1_lower.append(float(pred) - 0.05)
         y1_lower = y1_lower[::-1]
 
-        fig = go.Figure()
-
-        fig.add_trace(go.Scatter(
-            x=x+x_rev,
-            y=y1_upper+y1_lower,
-            fill='toself',
-            fillcolor='rgba(0,100,80,0.2)',
-            line_color='rgba(255,255,255,0)',
-            showlegend=False,
-            name='Faixa de erro',
-            line_shape='spline'
-        ))
-        fig.add_trace(go.Scatter(
-            x=x, y=y1,
-            line_color='rgb(0,100,80)',
-            name='Probabilidade de sobrevivência',
-            line_shape='spline'
-        ))
+        fig = px.line(x=x, y=y1, color_discrete_sequence=['#013A6E'] )
 
         fig.update_traces(mode='lines+markers+text')
 
-        fig.update_layout(xaxis_title='<b>Tempo após previsão<b>', 
+        fig.update_layout(font=dict(family="Courier New, monospace", color='#013A6E'), 
+        xaxis_title='<b>Tempo após previsão<b>', 
         yaxis_title='<b>Probabilidade do paciente sobreviver<b>', 
         title='<b><i>Probabilidade do paciente sobreviver ao decorrer dos meses<b><i>',
         yaxis_range=[0,1.1])
-        
         st.plotly_chart(fig, use_container_width=True)
 
 elif add_selectbox == 'Grupo':

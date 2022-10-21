@@ -14,17 +14,35 @@ st.image(eureka, use_column_width=True)
 
 #Função para gerar o plot de resultados
 def plot_confusion_matriz(confusion_matrix, tab):
+    # Quantidade de acertos e erros
+    VN = confusion_matrix[0][0]
+    FP = confusion_matrix[0][1]
+    FN = confusion_matrix[1][0]
+    VP = confusion_matrix[1][1]
+    
+    # (VP+VN)/(VP+VN+FV+FN)
+    acuracia = (VP+VN)/(VP+FP+VN+FN)
+    precisao = (VP)/(VP+FP)
+    revocacao = (VP)/(VP+FN)
+    f1_score = (2*precisao*revocacao)/(precisao+revocacao)
 
-    z = confusion_matrix
+    # Porcentagem de acertos e erros do modelo
+    VN_ = VN/(VN+FP)
+    FP_ = FP/(VN+FP)
+    VP_ = VP/(VP+FN)
+    FN_ = FN/(VP+FN)
+
+    # Normalização dos resultados
+    confusion_matrix = [[VN_, FP_], [FN_,VP_]]
 
     x = ['não sobrevive', 'sobrevive']
     y = ['não sobrevive', 'sobrevive']
 
     # change each element of z to type string for annotations
-    z_text = [[str(y)[:4] for y in x] for x in z]
+    z_text = [[str(y)[:4] for y in x] for x in confusion_matrix]
 
     # set up figure 
-    fig = ff.create_annotated_heatmap(z, x=x, y=y, annotation_text=z_text, colorscale='blues')
+    fig = ff.create_annotated_heatmap(confusion_matrix, x=x, y=y, annotation_text=z_text, colorscale='blues')
 
     # add custom xaxis title
     fig.add_annotation(dict(font=dict(color="black",size=14),
@@ -51,8 +69,7 @@ def plot_confusion_matriz(confusion_matrix, tab):
     # add colorbar
     fig['data'][0]['showscale'] = True
     # Plot!
-    acuracia = (float(confusion_matrix[0][0])+float(confusion_matrix[1][1]))/2
-    fig.update_layout(title=f'<i><b>Matrix confusão<b><i> (Acurácia={100*acuracia:.1f}%)')
+    fig.update_layout(title=f'<i><b>Confusion Matrix<b><i> (Accuracy={100*acuracia:.1f}% - Recall={100*revocacao:.1f}%)')
     tab.plotly_chart(fig, use_container_width=True)
 
 def roc_curve_plot(path1, path2, tab):
@@ -97,7 +114,7 @@ def roc_curve_plot(path1, path2, tab):
     fig.update_xaxes(constrain='domain')
     
     # Plot!
-    fig.update_layout(title=f'<i><b>Curva ROC (AUC={100*auc(fpr, tpr):.1f}%)<i><b>')
+    fig.update_layout(title=f'<i><b>ROC Curve (AUC={100*auc(fpr, tpr):.1f}%)<i><b>')
     tab.plotly_chart(fig, use_container_width=True)
 
 # Definicao das imagens e videos
@@ -171,72 +188,93 @@ with tab4:
     
     col1, col2 = tab4.columns(2)
 
-    col1.success('#### ***Acurácia = 66,8%***')
-    col2.success('#### ***ROC (AUC) = 73,2%***')
+    col1.success('#### ***Accuracy = 66,8%***')
+    col1.success('#### ***ROC Curve (AUC) = 73,2%***')
+    col1.success('#### ***Recall = 66,9%***')
     
-    tab4.markdown('### Desempenho específico de cada modelo de IA:')
-
     # Definição das tabs
     tab40, tab41, tab42, tab43, tab44, tab45, tab46, tab47, tab48, tab49 = st.tabs(['6 meses', '12 meses', '18 meses', '24 meses', '30 meses', '36 meses', '42 meses', '48 meses', '54 meses', '60 meses',])
 
         
     # Resultados para a label 6 meses
     with tab40:
-        confusion_matrix_6meses = [[0.74242424, 0.25757576], [0.25858502, 0.74141498]]
+        tab40.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_6meses = [[245,85],[625,1792]]
         plot_confusion_matriz(confusion_matrix_6meses, tab40)
+        
+        tab40.markdown('### Desempenho do modelo bioestatístico:')
+        biomatrix = [[94, 222], [316, 1930]]
+        plot_confusion_matriz(biomatrix, tab40)
+
+        tab40.markdown('### Mais sobre o desempenho da Inteligência Artificial:')
         roc_curve_plot(r'curvaROC/y_true_6meses.txt', r'curvaROC/y_score_6meses.txt', tab40)
- 
+
     # Resultados para a label 12 meses
     with tab41:
-        confusion_matrix_12meses = [[0.69415808, 0.30584192],[0.29935966, 0.70064034]]
+        tab41.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_12meses = [[606, 267], [561, 1313]]
         plot_confusion_matriz(confusion_matrix_12meses, tab41)
+        
+        tab41.markdown('### Desempenho do modelo bioestatístico:')
+        biomatrix = [[409, 427], [391, 1335]]
+        plot_confusion_matriz(biomatrix, tab41)
+        
+        tab41.markdown('### Mais sobre o desempenho da Inteligência Artificial:')
         roc_curve_plot(r'curvaROC/y_true_12meses.txt', r'curvaROC/y_score_12meses.txt', tab41)
 
     # Resultados para a label 18 meses
     with tab42:
-        confusion_matrix_18meses = [[0.67272727, 0.32727273], [0.32051282, 0.67948718]]
+        tab42.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_18meses = [[851, 414], [475, 1007]]
         plot_confusion_matriz(confusion_matrix_18meses, tab42)
         roc_curve_plot(r'curvaROC/y_true_18meses.txt', r'curvaROC/y_score_18meses.txt', tab42)
         
     # Resultados para a label 24 meses
     with tab43:
-        confusion_matrix_24meses = [[0.66842452, 0.33157548],[0.3371059,  0.6628941 ]]
+        tab43.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_24meses = [[1014, 503], [417, 820]]
         plot_confusion_matriz(confusion_matrix_24meses, tab43)
         roc_curve_plot(r'curvaROC/y_true_24meses.txt', r'curvaROC/y_score_24meses.txt', tab43)
  
     # Resultados para a label 30 meses
     with tab44:
-        confusion_matrix_30meses = [[0.65364121, 0.34635879], [0.33837429, 0.66162571]]
+        tab44.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_30meses = [[1104, 585], [358, 700]]
         plot_confusion_matriz(confusion_matrix_30meses, tab44)
         roc_curve_plot(r'curvaROC/y_true_30meses.txt', r'curvaROC/y_score_30meses.txt', tab44)
 
     # Resultados para a label 36 meses
     with tab45:
-        confusion_matrix_36meses =[[0.66684902, 0.33315098], [0.33477322, 0.66522678]]
+        tab45.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_36meses = [[1219, 609], [310, 616]]
         plot_confusion_matriz(confusion_matrix_36meses, tab45)
         roc_curve_plot(r'curvaROC/y_true_36meses.txt', r'curvaROC/y_score_36meses.txt', tab45)
 
     # Resultados para a label 42 meses
     with tab46:
-        confusion_matrix_42meses = [[0.65554465, 0.34445535],[0.33991537, 0.66008463]]
+        tab46.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_42meses = [[1336, 702], [241, 468]]
         plot_confusion_matriz(confusion_matrix_42meses, tab46)
         roc_curve_plot(r'curvaROC/y_true_42meses.txt', r'curvaROC/y_score_42meses.txt', tab46)
 
     # Resultados para a label 48 meses
     with tab47:
-        confusion_matrix_48meses = [[0.65059185, 0.34940815], [0.35306554, 0.64693446]]
+        tab47.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_48meses = [[1484, 797], [167, 306]]
         plot_confusion_matriz(confusion_matrix_48meses, tab47)
         roc_curve_plot(r'curvaROC/y_true_48meses.txt', r'curvaROC/y_score_48meses.txt', tab47)
 
     # Resultados para a label 54 meses
     with tab48:
-        confusion_matrix_54meses = [[0.64235969, 0.35764031], [0.36601307, 0.63398693]]
+        tab48.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_54meses = [[1568, 873], [112, 194]]
         plot_confusion_matriz(confusion_matrix_54meses, tab48)
         roc_curve_plot(r'curvaROC/y_true_54meses.txt', r'curvaROC/y_score_54meses.txt', tab48)
 
     # Resultados para a label 60 meses
     with tab49:
-        confusion_matrix_60meses = [[0.62914418, 0.37085582], [0.3625, 0.6375]]
+        tab49.markdown('### Desempenho da Inteligência Artificial:')
+        confusion_matrix_60meses = [[1632, 962], [58, 102]]
         plot_confusion_matriz(confusion_matrix_60meses, tab49)
         roc_curve_plot(r'curvaROC/y_true_60meses.txt', r'curvaROC/y_score_60meses.txt', tab49)
 
