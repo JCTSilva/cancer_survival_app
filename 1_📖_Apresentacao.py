@@ -11,6 +11,7 @@ from sklearn.metrics import roc_curve, auc
 
 eureka = Image.open('fotos/eureka2022-logo.png')
 st.image(eureka, use_column_width=True)
+st.markdown('## Aplicação de Inteligência Artificial para predição de sobrevida em pacientes com câncer')
 
 #Função para gerar o plot de resultados
 def plot_confusion_matriz(confusion_matrix, tab):
